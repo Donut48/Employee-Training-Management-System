@@ -1,0 +1,163 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.search-box {
+    position: relative;
+    width: 300px;
+}
+.search-box input {
+    width: 100%;
+    padding: 8px 15px 8px 35px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.search-box i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+tr:hover {
+    background-color: #f9f9f9;
+}
+.error-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px;
+    background-color: #ffebee;
+    border-left: 4px solid #f44336;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+}
+.error-notification span {
+    color: #d32f2f;
+}
+.retry-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+.pagination button {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Add these styles to your existing CSS */
+.log-type-toggle {
+    display: flex;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.log-type-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.log-type-btn.active {
+    background: #007bff;
+    color: white;
+}
+
+.log-type-btn:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.log-type-btn:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+/* Adjust the search box to align with the toggle */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .controls {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.action-approve {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.action-deny {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.action-return {
+    color: #ffc107;
+    font-weight: bold;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+
+th:nth-child(1) { width: 15%; }  /* Timestamp */
+th:nth-child(2) { width: 10%; }  /* Admin */
+th:nth-child(3) { width: 10%; }  /* Action */
+th:nth-child(4) { width: 10%; }  /* Employee/Details */
+th:nth-child(5) { width: 15%; }  /* Request Type (only for request logs) */
+th:nth-child(6) { width: 40%; }

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Employees{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='manageEmp.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="employee-management-container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Employee Management</h1>
+            <button id="addEmployeeBtn" class="btn-primary">
+                <i class="fas fa-plus"></i> Add Employee
+            </button>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <input type="text" id="employeeSearch" placeholder="Search employees...">
+                <i class="fas fa-search"></i>
+            </div>
+
+            <div class="filter-dropdown">
+                <select id="departmentFilter">
+                    <option value="">All Departments</option>
+                    <!-- Options populated by JavaScript -->
+                </select>
+            </div>
+
+            <div class="filter-dropdown">
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="true">Full-time</option>
+                    <option value="false">Part-time</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Employee Table -->
+        <div class="table-responsive">
+            <table id="employeeTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Programmes</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Employee Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Add New Employee</h2>
+            <form id="employeeForm">
+                <div class="form-group mb-3">
+                    <label for="empId" class="form-label">Employee ID</label>
+                    <input type="text" id="empId" class="form-control"
+                           placeholder="5-digit ID" required
+                           pattern="\d{5}" maxlength="5">
+                    <div id="idEmptyError" class="invalid-feedback">Please enter employee ID.</div>
+                    <div id="idExistError" class="invalid-feedback">ID already exists.</div>
+                    <div id="idFormatError" class="invalid-feedback">ID must be 5 digits.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="empName">Full Name</label>
+                    <input type="text" id="empName" class="form-control" required
+                           pattern="[A-Za-z ]+" maxlength="30"
+                           title="Alphabetic characters only">
+                    <div class="invalid-feedback" id="nameError">
+                        <!-- Error messages will be inserted here dynamically -->
+                    </div>
+                    <div class="valid-feedback">
+                        Name looks good!
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="empEmail" class="form-label">Email</label>
+                    <input type="email" id="empEmail" class="form-control"
+                           placeholder="Email" required>
+                    <div id="emailEmptyError" class="invalid-feedback">Please enter email.</div>
+                    <div id="emailExistError" class="invalid-feedback">Email already exists.</div>
+                    <div id="emailFormatError" class="invalid-feedback">Invalid email format.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="empDept">Department</label>
+                    <input type="text" id="empDept" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Employment Status</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="empStatus" value="true" checked> Full-time
+                        </label>
+                        <label>
+                            <input type="radio" name="empStatus" value="false"> Part-time
+                        </label>
+                    </div>
+                </div>
+
+<!--                <div class="form-group">-->
+<!--                    <label>Programmes</label>-->
+<!--                    <div id="programmeCheckboxes" class="checkbox-group">-->
+<!--                        &lt;!&ndash; Populated by JavaScript &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Employee</button>
+                    <button type="button" id="cancelEmployee" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Programme Management Modal -->
+    <div id="programmeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="programmeModalTitle">Manage Programmes</h2>
+            <div class="programme-management">
+                <div class="programme-list" id="currentProgrammes">
+                    <!-- Current programmes will be listed here -->
+                </div>
+                <div class="add-programme">
+                    <input type="text" id="newProgramme" placeholder="Enter programme name">
+                    <button id="addProgrammeBtn" class="btn-small">Add Programme</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/manageEmp.js') }}"></script>
+{% endblock %}

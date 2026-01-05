@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Logs{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='logs.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Admin Activity Logs</h1>
+
+        <div class="controls">
+            <div class="log-type-toggle">
+                <button class="log-type-btn active" data-type="admin">Admin Actions</button>
+                <button class="log-type-btn" data-type="requests">Request Logs</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="logSearch" placeholder="Search logs...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User/Admin</th>
+                        <th>Action/Request</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Logs will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button id="prevPage" disabled>Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" disabled>Next</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/logs.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}All Data{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='allRecords.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Employee Directory</h1>
+
+        <div class="table-controls">
+            <input type="text" id="employeeSearch" placeholder="Search employees...">
+            <button id="openFilterModal">Filter Employees</button>
+            <div class="export-buttons">
+                <button id="exportExcel">Export to Excel</button>
+                <button id="exportPDF">Export to PDF</button>
+            </div>
+            <div class="ms-3">
+                <span id="employeeCount" style="font-weight: bold;">0</span> employees found
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="employeeTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Programmes</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="filterModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Filter Employees</h2>
+
+        <div class="filter-section">
+          <h3>Departments</h3>
+            <div class="sort-controls">
+            <button id="sortByDepartment" class="sort-btn">Sort by Department</button>
+        </div>
+          <div id="departmentFilters" class="filter-options"></div>
+        </div>
+
+        <div class="filter-section">
+          <h3>Programmes</h3>
+            <div class="sort-controls">
+                <button id="sortByProgramme" class="sort-btn">Sort by Programme</button>
+            </div>
+          <div id="programmeFilters" class="filter-options"></div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="applyFilters">Apply Filters</button>
+          <button id="resetFilters">Reset All</button>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/records.js') }}"></script>
+{% endblock %}

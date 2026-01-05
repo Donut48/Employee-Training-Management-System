@@ -1,0 +1,942 @@
+body{
+    background-color: azure;
+    margin: 0;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+}
+nav{
+    background-color: lavenderblush;
+    border-bottom: solid black 1px;
+}
+.home{
+    height: 35px;
+    width: 35px;
+    border: solid black 3px;
+    border-radius: 50%;
+}
+
+.dashboard {
+  width: 100%;
+  transition: all 0.3s ease;
+  padding-right: 0; /* Start with no padding */
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s linear;
+}
+
+#loginError {
+    display: none;
+    color: #dc3545;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+/* Profile Modal Styles */
+#profileModal .modal-content {
+    max-width: 500px;
+}
+
+.image-preview {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#profilePreview {
+    border: 2px solid #ddd;
+    object-fit: cover;
+}
+
+.success-message {
+    color: green;
+    margin-top: 10px;
+    display: none;
+}
+
+
+/* Chat Container */
+.chat-container {
+  position: fixed;
+  top: 0;
+  right: -450px; /* Start hidden off-screen */
+  width: 450px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  transition: right 0.3s ease;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+/* When chat is active */
+.chat-active .dashboard {
+  width: calc(100% - 150px); /* Squeeze main content */
+  transform: translateX(0);
+  padding-right: 350px; /* Make space for chat */
+}
+
+.chat-active nav {
+    width: calc(100% - 200px); /* Squeeze main content */
+    transform: translateX(0);
+    padding-right: 350px;
+}
+
+.chat-active .chat-container {
+  right: 0; /* Slide chat into view */
+}
+
+/* Chat Toggle Button */
+.chat-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #4a6bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 101;
+}
+
+.chat-active .chat-toggle-btn {
+    display: None;
+}
+
+.chat-toggle-btn:hover {
+  background-color: #3a5bef;
+  transform: scale(1.05);
+}
+
+/* Chat Panel */
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 800px; /* or whatever height your panel is */
+  width: 450px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  position: relative;
+}
+
+/* Chat Header */
+.chat-header {
+  padding: 15px;
+  background-color: #4a6bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-chat-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Chat Body */
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.chat-message {
+  margin-bottom: 15px;
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+}
+
+.user-message {
+  background-color: #86deff;
+  margin-left: auto; /* align right */
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+
+.ai-message {
+  background-color: #ffffff;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
+}
+
+.contact-message {
+  background-color: #f1f0f0;
+  margin-right: auto; /* align left */
+  border-bottom-left-radius: 4px;
+}
+
+.other-message {
+  background-color: #f1f0f0;
+  margin-right: auto;
+  text-align: left;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.message-content {
+  margin-bottom: 5px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #666;
+  text-align: right;
+}
+
+.date-separator {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 0.85em;
+  color: #888;
+}
+
+/* Chat Footer */
+.chat-footer {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  background-color: white;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+  margin-right: 10px;
+}
+
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4a6bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .chat-container {
+    width: 300px;
+    right: -300px;
+  }
+
+  .chat-active .dashboard {
+    width: calc(100% - 300px);
+    padding-right: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    width: 100%;
+    right: -100%;
+  }
+
+  .chat-active .dashboard {
+    width: 100%;
+    padding-right: 0;
+    transform: translateX(-100%);
+  }
+
+  .chat-active .chat-container {
+    right: 0;
+  }
+}
+
+/* Contacts Panel */
+.contacts-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.contacts-search {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.contacts-search input {
+  width: 100%;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
+
+.contacts-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.contact {
+  display: flex;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.contact:hover {
+  background: #f9f9f9;
+}
+
+.contact.active {
+  background: #e3f2fd;
+}
+
+.contact-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.contact-avatar i {
+  font-size: 18px;
+  color: #555;
+}
+
+.contact-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contact-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.contact-info p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: #777;
+}
+
+/* Chat Window */
+.chat-window {
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  background: white;
+}
+
+.chat-window.active {
+  display: flex;
+}
+
+.contacts-panel.active ~ .chat-window {
+  display: none;
+}
+
+.back-to-contacts {
+  background: none;
+  border: none;
+  font-size: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  display: none;
+}
+
+.chat-title {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+}
+
+.chat-actions {
+  margin-left: 10px;
+}
+
+.chat-menu-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Responsive Behavior */
+@media (max-width: 768px) {
+  .back-to-contacts {
+    display: block;
+  }
+
+  .contacts-panel:not(.active) {
+    display: none;
+  }
+
+  .chat-window {
+    display: flex;
+  }
+}
+/* Contacts Modal */
+.contacts-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.contacts-modal.active {
+  display: flex;
+}
+
+.contacts-modal-content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.contacts-header {
+  padding: 15px;
+  background: #4a6bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contacts-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-contacts-modal {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.contacts-search {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.contacts-search input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
+
+.contacts-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 15px;
+}
+
+/* Chat Menu Button */
+.chat-menu-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
+  margin-right: 10px;
+}
+
+/* Chat Creation Modals */
+.search-results, .group-search-results {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.search-result {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-result:hover {
+  background: #f5f5f5;
+}
+
+.search-result img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.selected-user-card, .group-member {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.selected-user-card img, .group-member img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.remove-user, .remove-member {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #ff4444;
+  cursor: pointer;
+}
+
+.members-container {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.modal-footer .btn {
+  margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .chat-container {
+    width: 300px;
+    right: -300px;
+  }
+
+  .chat-active .dashboard {
+    width: calc(100% - 300px);
+    padding-right: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    width: 100%;
+    right: -100%;
+  }
+
+  .chat-active .dashboard {
+    width: 100%;
+    padding-right: 0;
+    transform: translateX(-100%);
+  }
+
+  .chat-active .chat-container {
+    right: 0;
+  }
+
+  .back-to-contacts {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: white;
+  }
+}
+
+.search-result-item {
+    display: flex;
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-result-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.search-result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.badge {
+    background: #007bff;
+    color: white;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 0.75em;
+}
+.unread-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    float: right;
+}
+
+.message-username {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
+  font-size: 0.95rem;
+}
+.date-separator {
+  text-align: center;
+  margin: 8px 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* === Modal Wrapper === */
+#loginModal {
+  display: none; /* hidden by default */
+  position: fixed;
+  z-index: 1000; /* on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5); /* dark overlay */
+}
+
+/* === Modal Box === */
+#loginModal .modal-content {
+  background: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* === Close Button === */
+#loginModal .close {
+  float: right;
+  font-size: 22px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+#loginModal .close:hover {
+  color: #000;
+}
+
+/* === Headings === */
+#loginModal h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+  font-size: 20px;
+}
+
+/* === Form Elements === */
+#loginModal .form-group {
+  margin-bottom: 15px;
+}
+
+#loginModal label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #444;
+}
+
+#loginModal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#loginModal input:focus {
+  border-color: #007bff;
+}
+
+/* === Buttons === */
+#loginModal .btn-primary {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+#loginModal .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* === Links === */
+#loginModal .forgot-password,
+#loginModal .back-to-login {
+  text-align: center;
+  margin-top: 10px;
+}
+#loginModal a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 13px;
+}
+#loginModal a:hover {
+  text-decoration: underline;
+}
+
+/* === Error & Success Messages === */
+#loginModal .error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+#loginModal .success-message {
+  color: green;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* === Fade Animation === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* === Profile Modal Wrapper === */
+#profileModal {
+  display: none; /* hidden by default */
+  position: fixed;
+  z-index: 1000; /* on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* === Modal Box === */
+#profileModal .modal-content {
+  background: #fff;
+  margin: 8% auto;
+  padding: 25px 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 95%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: fadeInScale 0.3s ease-out;
+}
+
+/* === Close Button === */
+#profileModal .close {
+  float: right;
+  font-size: 22px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+#profileModal .close:hover {
+  color: #000;
+}
+
+/* === Headings === */
+#profileModal h2 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+}
+
+/* === Form Elements === */
+#profileModal .form-group {
+  margin-bottom: 15px;
+}
+
+#profileModal label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #444;
+}
+
+#profileModal input[type="text"],
+#profileModal input[type="password"],
+#profileModal input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#profileModal input:focus {
+  border-color: #007bff;
+}
+
+/* === Image Preview === */
+#profileModal .image-preview {
+  text-align: center;
+  margin-top: 10px;
+}
+#profileModal .image-preview img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* === Buttons === */
+#profileModal .btn-primary {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+#profileModal .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* === Error & Success Messages === */
+#profileModal .error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+#profileModal .success-message {
+  color: green;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* === Fade + Scale Animation === */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* === Profile Button in Navbar === */
+.openProfileModal {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.openProfileModal img#profilePic {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.openProfileModal img#profilePic:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
+}
+
+/* === Logout Button === */
+.logoutBtn {
+  background-color: #dc3545; /* red */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.logoutBtn:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}

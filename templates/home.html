@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h3>Total Employees</h3>
+        <div id="total-employees">0</div>
+    </div>
+    <div class="card">
+        <h3>Full-time</h3>
+        <div id="full-time-count">0</div>
+    </div>
+    <div class="card">
+        <h3>Part-time</h3>
+        <div id="part-time-count">0</div>
+    </div>
+
+    <div id="error-message" class="error"></div>
+
+    <div class="chart-container card">
+        <h3>Employees by Department</h3>
+        <canvas id="departmentChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>Top Programmes</h3>
+        <div id="programmeRankings" class="rankings-container">
+            <!-- Rankings will be inserted here by JavaScript -->
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Debugging flag
+        const DEBUG = true;
+
+        // Initialize variables
+        let departmentChart;
+        const refreshInterval = 5000;
+        let isFetching = false;
+
+        // Colors for charts
+        const chartColors = [
+            '#3498db', '#2ecc71', '#e74c3c', '#f39c12',
+            '#9b59b6', '#1abc9c', '#d35400', '#34495e'
+        ];
+
+        // Debug logging function
+        function debugLog(message, data = null) {
+            if (DEBUG) {
+                console.log('[DEBUG] ' + message);
+                if (data) console.log(data);
+            }
+        }
+
+        // Normalization function
+        function normalizeName(name) {
+            if (!name) return '';
+            return String(name).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+        }
+
+        // Department Chart
+        function updateDepartmentChart(data) {
+            const ctx = document.getElementById('departmentChart');
+            if (!ctx) return;
+
+            // Get display names for departments
+            const departments = data.departments || {};
+            const displayNames = data.department_display_names || {};
+
+            // Convert to array and sort by count
+            const sortedDepts = Object.entries(departments)
+                .sort((a, b) => b[1] - a[1]);
+
+            // Use display names where available
+            const labels = sortedDepts.map(([normDept]) => displayNames[normDept] || normDept);
+            const values = sortedDepts.map(([_, count]) => count);
+
+            if (departmentChart) {
+                departmentChart.data.labels = labels;
+                departmentChart.data.datasets[0].data = values;
+                departmentChart.update();
+            } else {
+                departmentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Employees',
+                            data: values,
+                            backgroundColor: chartColors.slice(0, labels.length),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.label}: ${ctx.raw} employees`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Employees',
+                                    font: { weight: 'bold' }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Departments',
+                                    font: { weight: 'bold' }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Programme Rankings
+        function updateProgrammeRankings(data) {
+            const container = document.getElementById('programmeRankings');
+            if (!container) return;
+
+            // Get display names for programmes
+            const programmes = data.programmes || {};
+            const displayNames = data.programme_display_names || {};
+
+            // Convert to array and sort by popularity
+            const sortedProgrammes = Object.entries(programmes)
+                .sort((a, b) => b[1] - a[1]);
+
+            const topN = 5;
+            const topProgrammes = sortedProgrammes.slice(0, topN);
+            const totalEnrollments = sortedProgrammes.reduce((sum, [_, count]) => sum + count, 0);
+
+            container.innerHTML = '';
+            const list = document.createElement('ol');
+            list.className = 'rankings-list';
+
+            topProgrammes.forEach(([normProg, count], index) => {
+                const displayName = displayNames[normProg] || normProg;
+                const item = document.createElement('li');
+
+                // Rank number
+                const rank = document.createElement('span');
+                rank.className = 'rank-number';
+                rank.textContent = `#${index + 1}`;
+
+                // Programme name (using display name)
+                const name = document.createElement('span');
+                name.className = 'programme-name';
+                name.textContent = displayName;
+
+                // Percentage
+                const percentage = Math.round((count / totalEnrollments) * 100);
+                const countSpan = document.createElement('span');
+                countSpan.className = 'programme-count';
+                countSpan.textContent = `${count} (${percentage}%)`;
+
+                item.appendChild(rank);
+                item.appendChild(name);
+                item.appendChild(countSpan);
+                list.appendChild(item);
+            });
+
+            container.appendChild(list);
+        }
+
+        // Main dashboard update
+        async function updateDashboard() {
+            if (isFetching) return;
+            isFetching = true;
+
+            try {
+                const response = await fetch('/api/employee-data');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.message || 'API error');
+
+                // Update UI
+                document.getElementById('total-employees').textContent = data.total_employees || 0;
+                document.getElementById('full-time-count').textContent = data.employment_types?.['Full-time'] || 0;
+                document.getElementById('part-time-count').textContent = data.employment_types?.['Part-time'] || 0;
+                document.getElementById('error-message').textContent = '';
+
+                // Update charts with display names
+                updateDepartmentChart(data);
+                updateProgrammeRankings(data);
+
+            } catch (error) {
+                console.error("Dashboard error:", error);
+                document.getElementById('error-message').textContent =
+                    `Error: ${error.message}. Will retry...`;
+
+                updateDepartmentChart({ departments: {}, department_display_names: {} });
+                updateProgrammeRankings({ programmes: {}, programme_display_names: {} });
+            } finally {
+                isFetching = false;
+                setTimeout(updateDashboard, refreshInterval);
+            }
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            debugLog('Initializing dashboard');
+            updateDashboard();
+        });
+    </script>
+{% endblock %}

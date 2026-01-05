@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Queue Dashboard</title>
+    <style>
+        .priority-1 { color: red; font-weight: bold; }
+        .priority-2 { color: orange; }
+        .priority-3 { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Request Queue ({{ queue_size }} pending)</h1>
+
+    {% if next_request %}
+    <div class="next-request">
+        <h2>Next Request to Process:</h2>
+        <p>Employee: {{ next_request.employee_id }}</p>
+        <p class="priority-{{ next_request.priority_level }}">
+            Priority: {{ next_request.priority_level }}
+        </p>
+        <p>Type: {{ next_request.request_type }}</p>
+        <p>Details: {{ next_request.request_details }}</p>
+        <form action="/api/queue/process" method="POST">
+            <button type="submit">Process This Request</button>
+        </form>
+    </div>
+    {% else %}
+    <p>No requests in queue</p>
+    {% endif %}
+
+    <h2>Queue Statistics</h2>
+    <a href="/api/queue/stats">View All Requests</a><br>
+    <a href="/api/queue/stats?type=Training">Filter: Training Requests</a><br>
+    <a href="/api/queue/stats?priority=1">Filter: Priority 1 Requests</a>
+</body>
+</html>
