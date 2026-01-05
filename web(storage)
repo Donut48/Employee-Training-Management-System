@@ -1,0 +1,26 @@
+to change the username
+
+@app.route('/api/employees/<int:emp_id>/username', methods=['PUT'])
+def update_username(emp_id):
+    try:
+        new_username = request.json.get('username')
+        if not new_username or not isinstance(new_username, str):
+            return jsonify({'error': 'Invalid username'}), 400
+
+        with shelve.open('Admin', writeback=True) as admin_db:
+            if emp_id not in admin_db.get('employees', {}):
+                return jsonify({'error': 'Employee not found'}), 404
+
+            # Check if username already exists
+            if any(emp['username'] == new_username
+                   for emp in admin_db['employees'].values()
+                   if isinstance(emp, dict)):
+                return jsonify({'error': 'Username already taken'}), 400
+
+            admin_db['employees'][emp_id]['username'] = new_username
+            admin_db.sync()
+
+        return jsonify({'success': True, 'message': 'Username updated'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
