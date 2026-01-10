@@ -26,14 +26,17 @@ import os
 import traceback
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.secret_key = "iafhwaoi_pfpw&$Aoahr2412421r80ww+afwad"
+app.secret_key = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 
-cipher = Fernet('fksUxiKekfpWBtrWQA5cre1lQ8EcDa6REG2VPPK51Rg=')
+cipher = Fernet(os.getenv("FERNET_KEY"))
 
+email_address = os.getenv("EMAIL_ADDRESS")
+email_password = os.getenv("EMAIL_PASSWORD")
 
 class Employee:
     def __init__(self, name, id, email, programmes, department, status):
@@ -733,7 +736,7 @@ def send_credentials(email, username, password, is_reset=False):
         # SMTP Configuration
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
-            server.login('babibiwasabi@gmail.com', 'obuhxxtmdyongnzg')
+            server.login(email_address, email_password)
             server.send_message(msg)
 
         print(f"✅ Email sent to {email}")
